@@ -12,7 +12,7 @@ const express = require('express')
 
 const app = express()
 
-const router = require('@kbco/auth')(app);
+const router = require('@kbco/router')(app);
 
 router.get('/', (req, res) => ('Hello World!'))
 
@@ -25,7 +25,7 @@ var express = require('express')
 
 var app = express()
 
-var router = require('@kbco/auth')(app);
+var router = require('@kbco/router')(app);
 
 router.get('/', function(req, res) {
     return 'Hello World!';
@@ -51,3 +51,30 @@ router.resource('resource_name', {
 })
 ```
 It will automatically declare the corresponding get/post/put/delete/get requests so you can type a little less and get the same functionallity as every other route.
+
+# Other frameworks
+I made sure to test with other frameworks and wanted to be able to have a more fluent interface across the board. If you're looking to use a framework that isn't offically supported, or needs custom configuration, then you're welcome to submit a PR.
+
+### Tested frameworks 
+ - [Hapi](https://github.com/hapijs/hapi)
+```node
+const Hapi = require('hapi');
+const server = new Hapi.Server();
+
+server.connection({ port: 3000, host: 'localhost' });
+
+const router = require('@kbco/router')(null, function (method, path, handler) {
+    return server.route({
+        method,
+        path,
+        handler: function (response, reply) {
+            return reply(handler(response, reply));
+        });
+    });
+});
+
+server.start((err) => console.log(err || `Server running at: ${server.info.uri}`));
+
+```
+ - [Express](https://github.com/expressjs/express)
+See the "How to use" section.
