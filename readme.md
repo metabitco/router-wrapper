@@ -73,6 +73,10 @@ const router = require('@kbco/router')(null, function (method, path, handler) {
     });
 });
 
+router.get('/', function(req, res) {
+    return 'Hello World!';
+});
+
 server.start((err) => console.log(err || `Server running at: ${server.info.uri}`));
 
 ```
