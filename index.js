@@ -1,6 +1,6 @@
 
 
-module.exports = function (app) {
+module.exports = function (app, handler) {
     function registerRoute(type, path, resource) {
         if (typeof resource === 'string') {
             throw new Error('We do not support controllers just yet!')
@@ -10,17 +10,21 @@ module.exports = function (app) {
             path = '/' + path;
         }
         
-        app[type](path, (req, res, next) => {
-            
-            let response = resource(req, res, next);
-            
-            if (typeof response === 'object') {
-                res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify(response));
-            } else {
-                res.send(response);    
-            }
-        });
+        let requestHandler = handler || ((type, path, resource) => {
+            app[type](path, (req, res, next) => {
+                
+                let response = resource(req, res, next);
+                
+                if (typeof response === 'object') {
+                    res.setHeader('Content-Type', 'application/json');
+                    res.send(JSON.stringify(response));
+                } else {
+                    res.send(response);    
+                }
+            });
+        })
+        
+        requestHandler(type, path, resource);
     }
         
     function get(path, resource) {
@@ -50,19 +54,22 @@ module.exports = function (app) {
         put,
         post, 
         registerRoute,
-        resource(path, resource) {
+        resource(path, resource, routeParam) {
             if (typeof resource !== 'object') {
                 throw new Error('Your resource MUST be an object')
             }
+            
+            routeParam = routeParam || ':id';
+            
             get(path, resource.index);
             
             post(path, resource.store);
             
-            put(path + '/:id', resource.update);
+            put(path + '/' + routeParam, resource.update);
             
-            delete(path + '/:id', resource.destroy);
+            delete(path + '/' + routeParam, resource.destroy);
             
-            get(path + '/:id', resource.show);
+            get(path + '/' + routeParam, resource.show);
         }
     }
 }
