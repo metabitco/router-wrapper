@@ -1,10 +1,10 @@
 {
   "name": "@kbco/router",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A simple router wrapper for express",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha -R spec tests/*spec.js"
   },
   "author": "Austin Kregel",
   "license": "MIT",
