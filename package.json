@@ -9,6 +9,12 @@
   "author": "Austin Kregel",
   "license": "MIT",
   "devDependencies": {
-    "express": "^4.16.2"
-  }
+    "chai": "^4.1.2",
+    "express": "^4.16.2",
+    "hapi": "^16.6.0",
+    "hapi-test": "^5.2.0",
+    "mocha": "^4.1.0",
+    "supertest": "^3.0.0"
+  },
+  "dependencies": {}
 }
