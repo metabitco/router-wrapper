@@ -1,7 +1,7 @@
 
 
 module.exports = function (app, handler) {
-    function registerRoute(type, path, resource) {
+    function registerRoute(type, path, resource, middleware) {
         if (typeof resource === 'string') {
             throw new Error('We do not support controllers just yet!')
         }
@@ -11,7 +11,7 @@ module.exports = function (app, handler) {
         }
         
         let requestHandler = handler || ((type, path, resource) => {
-            app[type](path, (req, res, next) => {
+            let resolve = (req, res, next) => {
                 
                 let response = resource(req, res, next);
                 
@@ -21,36 +21,43 @@ module.exports = function (app, handler) {
                 } else {
                     res.send(response);    
                 }
-            });
+            };
+            
+            if (middleware) {
+                app[type](path, middleware, resolve);
+            } else {
+                app[type](path, resolve);
+            }
         })
         
-        requestHandler(type, path, resource);
+        requestHandler(type, path, resource, middleware);
     }
         
-    function get(path, resource) {
-        registerRoute('get', path, resource);
+    function get(path, resource, middleware) {
+        registerRoute('get', path, resource, middleware);
     }
         
-    function post(path, resource) {
-        registerRoute('post', path, resource);
+    function post(path, resource, middleware) {
+        registerRoute('post', path, resource, middleware);
     }
         
-    function put(path, resource) {
-        registerRoute('put', path, resource);
+    function put(path, resource, middleware) {
+        registerRoute('put', path, resource, middleware);
     }
         
-        
-    function patch(path, resource) {
-        registerRoute('patch', path, resource);
+    function patch(path, resource, middleware) {
+        registerRoute('patch', path, resource, middleware);
+    }
+    
+    function destroy(path, resource, middleware) {
+        registerRoute('delete', path, resource, middleware);
     }
     
 
     return {
         get,
         patch,
-        delete(path, resource) {
-            registerRoute('delete', path, resource);
-        },
+        'delete': destroy,
         put,
         post, 
         registerRoute,
@@ -67,7 +74,7 @@ module.exports = function (app, handler) {
             
             put(path + '/' + routeParam, resource.update);
             
-            delete(path + '/' + routeParam, resource.destroy);
+            destroy(path + '/' + routeParam, resource.destroy);
             
             get(path + '/' + routeParam, resource.show);
         }
