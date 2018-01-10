@@ -1,5 +1,3 @@
-
-
 module.exports = function (app, handler) {
     function registerRoute(type, path, resource, middleware) {
         if (typeof resource === 'string') {
