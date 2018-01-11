@@ -1,8 +1,9 @@
 {
   "name": "@kbco/router",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A simple router wrapper for express",
   "main": "index.js",
+  "repository": "kbcomputers/router-wrapper",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha -R spec tests/*spec.js"
   },
@@ -16,5 +17,9 @@
     "mocha": "^4.1.0",
     "supertest": "^3.0.0"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "keywords": [
+    "web",
+    "router"
+  ]
 }
