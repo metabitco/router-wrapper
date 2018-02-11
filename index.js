@@ -53,6 +53,7 @@ module.exports = function (app, handler) {
     
 
     return {
+        express: app,
         get,
         patch,
         'delete': destroy,
