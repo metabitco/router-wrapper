@@ -82,3 +82,8 @@ server.start((err) => console.log(err || `Server running at: ${server.info.uri}`
 ```
  - [Express](https://github.com/expressjs/express)
 See the "How to use" section.
+
+## Support on Beerpay
+Hey dude! Help me out for a couple of :beers:!
+
+[![Beerpay](https://beerpay.io/metabitco/router-wrapper/badge.svg?style=beer-square)](https://beerpay.io/metabitco/router-wrapper)  [![Beerpay](https://beerpay.io/metabitco/router-wrapper/make-wish.svg?style=flat-square)](https://beerpay.io/metabitco/router-wrapper?focus=wish)
