@@ -5,7 +5,8 @@
   "main": "index.js",
   "repository": "kbcomputers/router-wrapper",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha -R spec tests/*spec.js"
+    "test": "./node_modules/mocha/bin/mocha -R spec tests/*spec.js",
+    "local-coverage": "./node_modules/.bin/nyc --reporter=html npm test"
   },
   "author": "Austin Kregel",
   "license": "MIT",
