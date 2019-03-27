@@ -1,81 +1,104 @@
-module.exports = function (app, handler) {
-    function registerRoute(type, path, resource, middleware) {
+class Router {
+    constructor(app, handler) {
+        this.app = app;
+        this.handler = handler;
+        this.pMiddleware = null;
+    }
+
+    registerRoute(type, path, resource, middleware) {
         if (typeof resource === 'string') {
-            throw new Error('We do not support controllers just yet!')
+            throw new Error('We do not support controller strings just yet!')
         }
-        
+
         if (!path.startsWith('/')) {
             path = '/' + path;
         }
-        
-        let requestHandler = handler || ((type, path, resource) => {
+
+        let requestHandler = this.handler || ((type, path, resource) => {
             let resolve = (req, res, next) => {
-                
+
                 let response = resource(req, res, next);
-                
+
                 if (typeof response === 'object') {
                     res.setHeader('Content-Type', 'application/json');
                     res.send(JSON.stringify(response));
                 } else {
-                    res.send(response);    
+                    res.send(response);
                 }
             };
-            
-            if (middleware) {
-                app[type](path, middleware, resolve);
+
+            if (middleware || this.pMiddleware) {
+                this.app[type](path, middleware || this.pMiddleware, resolve);
+                this.pMiddleware = null;
             } else {
-                app[type](path, resolve);
+                this.app[type](path, resolve);
             }
         })
-        
-        requestHandler(type, path, resource, middleware);
-    }
-        
-    function get(path, resource, middleware) {
-        registerRoute('get', path, resource, middleware);
-    }
-        
-    function post(path, resource, middleware) {
-        registerRoute('post', path, resource, middleware);
-    }
-        
-    function put(path, resource, middleware) {
-        registerRoute('put', path, resource, middleware);
-    }
-        
-    function patch(path, resource, middleware) {
-        registerRoute('patch', path, resource, middleware);
-    }
-    
-    function destroy(path, resource, middleware) {
-        registerRoute('delete', path, resource, middleware);
-    }
-    
 
-    return {
-        express: app,
-        get,
-        patch,
-        'delete': destroy,
-        put,
-        post, 
-        registerRoute,
-        resource(path, resource, routeParam) {
-            if (typeof resource !== 'object') {
-                throw new Error('Your resource MUST be an object')
-            }
-            
-            routeParam = routeParam || ':id';
-            
-            get(path, resource.index);
-            
-            post(path, resource.store);
-            
-            put(path + '/' + routeParam, resource.update);
-            
-            destroy(path + '/' + routeParam, resource.destroy);
-            
-            get(path + '/' + routeParam, resource.show);
-        }
+        requestHandler(type, path, resource, middleware);
+
+        return this;
     }
+
+    get(path, resource, middleware) {
+        this.registerRoute('get', path, resource, middleware);
+        return this;
+    }
+
+    post(path, resource, middleware) {
+        this.registerRoute('post', path, resource, middleware);
+        return this;
+    }
+
+    put(path, resource, middleware) {
+        this.registerRoute('put', path, resource, middleware);
+        return this;
+    }
+
+    patch(path, resource, middleware) {
+        this.registerRoute('patch', path, resource, middleware);
+        return this;
+    }
+
+    delete(path, resource, middleware) {
+        this.registerRoute('delete', path, resource, middleware);
+        return this;
+    }
+
+    middleware(middleware) {
+        this.pMiddleware = middleware;
+        return this;
+    }
+
+    _getMiddleware() {
+        return this.pMiddleware;
+    }
+
+    resource(path, resource, routeParam) {
+        if (typeof resource !== 'object') {
+            throw new Error('Your resource MUST be an object')
+        }
+
+        routeParam = routeParam || ':id';
+
+        let middleware = this._getMiddleware()
+
+        this.get(path, resource.index, middleware);
+
+        this.post(path, resource.store, middleware);
+
+        this.put(path + '/' + routeParam, resource.update, middleware);
+
+        this.delete(path + '/' + routeParam, resource.destroy, middleware);
+
+        this.get(path + '/' + routeParam, resource.show, middleware);
+
+        return this;
+    }
+}
+
+module.exports = function (app, handler) {
+    let classRouter = new Router(app, handler);
+
+    return classRouter
 }
