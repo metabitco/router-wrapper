@@ -1,7 +1,7 @@
-var request = require('supertest');
-var chai = require('chai');
+const request = require('supertest');
+const chai = require('chai');
 
-var assert = chai.assert;
+const assert = chai.assert;
 
 describe('loading express', function () {
     var server;
@@ -16,22 +16,22 @@ describe('loading express', function () {
             .get('/')
             .expect(200, done);
     });
-    it('can recieve a post request', function testPath(done) {
+    it('can receive a post request', function testPath(done) {
         request(server)
             .post('/post', {})
             .expect(200, done);
     });
-    it('can recieve a put request', function testPath(done) {
+    it('can receive a put request', function testPath(done) {
         request(server)
             .put('/put', {})
             .expect(200, done);
     });
-    it('can recieve a delete request', function testPath(done) {
+    it('can receive a delete request', function testPath(done) {
         request(server)
             .delete('/delete', {})
             .expect(200, done);
     });
-    it('can recieve a patch request', function testPath(done) {
+    it('can receive a patch request', function testPath(done) {
         request(server)
             .patch('/patch', {})
             .expect(200, done);
