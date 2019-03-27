@@ -1,6 +1,6 @@
 {
   "name": "@kbco/router",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A simple router wrapper for express",
   "main": "index.js",
   "repository": "kbcomputers/router-wrapper",
