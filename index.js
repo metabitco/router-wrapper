@@ -88,6 +88,7 @@ class Router {
         this.post(path, resource.store, middleware);
 
         this.put(path + '/' + routeParam, resource.update, middleware);
+        this.patch(path + '/' + routeParam, resource.update, middleware);
 
         this.delete(path + '/' + routeParam, resource.destroy, middleware);
 
