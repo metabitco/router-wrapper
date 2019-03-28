@@ -5,7 +5,10 @@ const app = express()
 // Replace "../index" with @kbco/router
 const router = require('../index')(app);
 
-router.get('/', (req, res) => ('Hello World!'))
+router.get({
+    path: '/',
+    resource: (req, res) => ('Hello World!')
+})
 
 router.post('/post', (req, res) => ('Hello post!'))
 

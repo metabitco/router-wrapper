@@ -40,27 +40,32 @@ class Router {
         return this;
     }
 
-    get(path, resource, middleware) {
+    get() {
+        let {path, resource, middleware} = this._getActualParamsFromUrl(arguments);
         this.registerRoute('get', path, resource, middleware);
         return this;
     }
 
-    post(path, resource, middleware) {
+    post() {
+        let {path, resource, middleware} = this._getActualParamsFromUrl(arguments);
         this.registerRoute('post', path, resource, middleware);
         return this;
     }
 
-    put(path, resource, middleware) {
+    put() {
+        let {path, resource, middleware} = this._getActualParamsFromUrl(arguments);
         this.registerRoute('put', path, resource, middleware);
         return this;
     }
 
-    patch(path, resource, middleware) {
+    patch() {
+        let {path, resource, middleware} = this._getActualParamsFromUrl(arguments);
         this.registerRoute('patch', path, resource, middleware);
         return this;
     }
 
-    delete(path, resource, middleware) {
+    delete() {
+        let {path, resource, middleware} = this._getActualParamsFromUrl(arguments);
         this.registerRoute('delete', path, resource, middleware);
         return this;
     }
@@ -72,6 +77,28 @@ class Router {
 
     _getMiddleware() {
         return this.pMiddleware;
+    }
+
+    /*
+     * If I'm totally honest, this is likely to be a big breaking change.
+     * I did test it pretty intensively, but of course I can't test everything...
+     */
+    _getActualParamsFromUrl(argument) {
+        let possiblePat = argument[0];
+
+        if (possiblePat.hasOwnProperty('path')) {
+            var {path, resource, middleware} = possiblePat;
+        } else {
+            var path = argument[0]
+            var resource = argument[1]
+            var middleware = argument[2];
+        }
+
+        return {
+            path,
+            resource,
+            middleware
+        }
     }
 
     resource(path, resource, routeParam) {
