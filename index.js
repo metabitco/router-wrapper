@@ -15,9 +15,9 @@ class Router {
         }
 
         let requestHandler = this.handler || ((type, path, resource) => {
-            let resolve = (req, res, next) => {
+            let resolve = async (req, res, next) => {
 
-                let response = resource(req, res, next);
+                let response = await resource(req, res, next);
 
                 if (typeof response === 'object') {
                     res.setHeader('Content-Type', 'application/json');
