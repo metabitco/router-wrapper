@@ -1,8 +1,9 @@
 class Router {
-    constructor(app, handler) {
-        this.app = app;
+    constructor(application, handler) {
+        this.application = application;
         this.handler = handler;
         this.pMiddleware = null;
+        this.routes = [];
     }
 
     registerRoute(type, path, resource, middleware) {
@@ -13,6 +14,17 @@ class Router {
         if (!path.startsWith('/')) {
             path = '/' + path;
         }
+
+        middleware = this._unifyMiddleware(middleware);
+
+        let hasMiddleware = middleware !== null && middleware !== undefined;
+
+        this.routes.push({
+            method: type,
+            path,
+            hasMiddleware,
+            middlewareCount: Array.isArray(middleware) ? middleware.length : (hasMiddleware ? 1 : 0),
+        });
 
         let requestHandler = this.handler || ((type, path, resource) => {
             let resolve = async (req, res, next) => {
@@ -27,11 +39,11 @@ class Router {
                 }
             };
 
-            if (middleware || this.pMiddleware) {
-                this.app[type](path, middleware || this.pMiddleware, resolve);
+            if (middleware) {
+                this.application[type](path, middleware, resolve);
                 this.pMiddleware = null;
             } else {
-                this.app[type](path, resolve);
+                this.application[type](path, resolve);
             }
         })
 
@@ -101,6 +113,35 @@ class Router {
         }
     }
 
+    _unifyMiddleware(middleware) {
+        if (!middleware && !this.pMiddleware) {
+            return null;
+        }
+
+        if (!middleware && this.pMiddleware) {
+            return this.pMiddleware;
+        }
+
+        if (middleware && !this.pMiddleware) {
+            return middleware;
+        }
+
+        if (Array.isArray(middleware) && Array.isArray(this.pMiddleware)) {
+            return middleware.concat(this.pMiddleware);
+        }
+
+        if (Array.isArray(middleware) && !Array.isArray(this.pMiddleware)) {
+            middleware.push(this.pMiddleware);
+            return middleware;
+        }
+
+        if (!Array.isArray(middleware) && Array.isArray(this.pMiddleware)) {
+            return [middleware].concat(this.pMiddleware);
+        }
+
+        return [middleware, this.pMiddleware];
+    }
+
     resource(path, resource, routeParam) {
         if (typeof resource !== 'object') {
             throw new Error('Your resource MUST be an object')
@@ -125,8 +166,8 @@ class Router {
     }
 }
 
-module.exports = function (app, handler) {
-    let classRouter = new Router(app, handler);
+module.exports = function (application, handler) {
+    let classRouter = new Router(application, handler);
 
     return classRouter
 }
