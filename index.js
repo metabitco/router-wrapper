@@ -19,12 +19,14 @@ class Router {
 
         let hasMiddleware = middleware !== null && middleware !== undefined;
 
-        this.routes.push({
-            method: type,
-            path,
-            hasMiddleware,
-            middlewareCount: Array.isArray(middleware) ? middleware.length : (hasMiddleware ? 1 : 0),
-        });
+        if (this.routes || this.routes.hasOwnProperty('push')) {
+            this.routes.push({
+                method: type,
+                path,
+                hasMiddleware,
+                middlewareCount: Array.isArray(middleware) ? middleware.length : (hasMiddleware ? 1 : 0),
+            });
+        }
 
         let requestHandler = this.handler || ((type, path, resource) => {
             let resolve = async (req, res, next) => {
